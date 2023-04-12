@@ -78,7 +78,10 @@ jobs:
         if: startsWith(runner.os, 'Linux')
         uses: actions/cache@v3
         with:
-          path: /var/cache/apt
+          path: |
+            /var/cache/apt
+            !/var/cache/apt/archives/lock
+            !/var/cache/apt/archives/partial
           key: ${{ runner.os }}-apt-cache-${{ matrix.os }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-apt-cache-${{ matrix.os }}-
