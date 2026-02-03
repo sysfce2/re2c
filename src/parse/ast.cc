@@ -332,10 +332,6 @@ Ret check_and_merge_special_rules(AstGrams& grams, const opt_t* opts, Msg& msg, 
                 all_conds_have_it = false; \
             } else if (g.name == STAR_COND) { \
                 star_action = g.action[0]; \
-            } else if (g.rules.empty()) { \
-                RET_FAIL(msg.error(g.action[0]->loc, \
-                    "%s action for non-existing condition `%s` found", \
-                    str, g.name.c_str())); \
             } \
         } \
         if (star_action && all_conds_have_it) { \
@@ -419,6 +415,21 @@ Ret check_and_merge_special_rules(AstGrams& grams, const opt_t* opts, Msg& msg, 
             g.def_rule = g.rules.size();
             const SemAct* a = g.defs[0];
             g.rules.push_back({ast.def(a->loc), a});
+        }
+    }
+
+    for (const AstGram& g : grams) {
+        if (g.rules.empty()) {
+#define CHECK_ACTION(action, str) do { \
+            if (!g.action.empty()) { \
+                RET_FAIL(msg.error(g.action[0]->loc, \
+                    "%s action %sbut no rules found", str, incond(g.name).c_str())); \
+            } \
+} while(0)
+            CHECK_ACTION(entry, "entry");
+            CHECK_ACTION(pre_rule, "pre-rule");
+            CHECK_ACTION(post_rule, "post-rule");
+#undef CHECK_ACTION
         }
     }
 
