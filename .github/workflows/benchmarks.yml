@@ -43,7 +43,9 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          # Note: 'redhat' is one of the distributions that packages OpenJDK, see
+          # https://github.com/marketplace/actions/setup-java-jdk#supported-distributions
+          distribution: 'redhat'
           java-version: '24'
 
       - name: Setup Common Prerequisites
